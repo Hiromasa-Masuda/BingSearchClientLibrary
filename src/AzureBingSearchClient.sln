@@ -1,9 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.30711.63
+# Visual Studio Version 17
+VisualStudioVersion = 17.6.33815.320
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BingSearchDemo001", "BingSearchDemo001\BingSearchDemo001.csproj", "{7B2483B9-F3D6-4283-8346-3B18DA6DDA27}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BingSearchDemo001", "BingSearchDemo001\BingSearchDemo001.csproj", "{7B2483B9-F3D6-4283-8346-3B18DA6DDA27}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AzureBingSearchClient", "AzureBingSearchClient\AzureBingSearchClient.csproj", "{09104A84-D2B5-42E1-A53C-F10D80B8512D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{7B2483B9-F3D6-4283-8346-3B18DA6DDA27}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7B2483B9-F3D6-4283-8346-3B18DA6DDA27}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7B2483B9-F3D6-4283-8346-3B18DA6DDA27}.Release|Any CPU.Build.0 = Release|Any CPU
+		{09104A84-D2B5-42E1-A53C-F10D80B8512D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{09104A84-D2B5-42E1-A53C-F10D80B8512D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{09104A84-D2B5-42E1-A53C-F10D80B8512D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{09104A84-D2B5-42E1-A53C-F10D80B8512D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

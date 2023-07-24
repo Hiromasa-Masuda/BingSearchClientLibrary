@@ -1,7 +1,0 @@
-﻿################################################################################
-# この .gitignore ファイルは Microsoft(R) Visual Studio によって自動的に作成されました。
-################################################################################
-
-/BingSearchDemo001/.vs/BingSearchDemo001
-/BingSearchDemo001/BingSearchDemo001/bin
-/BingSearchDemo001/BingSearchDemo001/obj
