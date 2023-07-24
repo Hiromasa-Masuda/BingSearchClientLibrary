@@ -20,7 +20,7 @@ class Program
 
         BingClient bingClient = new BingClient(subscriptionKey);
 
-        var webPages = await bingClient.SearchWeb(keyword);
+        var webPages = await bingClient.SearchWebAsync(keyword);
         webPages.ToList().ForEach(w => 
         {
             Console.WriteLine($"ページ タイトル: {w.Name}");
@@ -29,7 +29,7 @@ class Program
             Console.WriteLine();
         });            
 
-        var images = await bingClient.SearchImage(keyword);
+        var images = await bingClient.SearchImageAsync(keyword);
         images.ToList().ForEach(img =>
         {
             Console.WriteLine($"画像タイトル: {img.Name}");
@@ -39,7 +39,7 @@ class Program
 
         await Task.Delay(1000);
 
-        var videos = await bingClient.SearchVideo(keyword);
+        var videos = await bingClient.SearchVideoAsync(keyword);
         videos.ToList().ForEach(v =>
         {
             Console.WriteLine($"動画タイトル: {v.Name}");
@@ -50,7 +50,7 @@ class Program
             Console.WriteLine();
         });
 
-        var news = await bingClient.SearchNews(keyword);
+        var news = await bingClient.SearchNewsAsync(keyword);
         news.ToList().ForEach(n =>
         {
             Console.WriteLine($"ニュース タイトル: {n.Name}");

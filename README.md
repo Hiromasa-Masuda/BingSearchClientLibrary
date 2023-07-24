@@ -1,6 +1,19 @@
-# Bing Search Client Library サンプル
+# Azure Bing Search Client Library
 
-Bing Search v7 を REST でコールする .NET Core コンソール アプリ(.NET 5)のサンプルです。
+Azure Bing Search v7 で利用可能なクライアントライブラリです。
+
+```csharp
+string subscriptionKey = "<yourKey>";
+string keyword = "猫";
+
+BingClient bingClient = new BingClient(subscriptionKey);
+
+var webPages = await bingClient.SearchWebAsync(keyword);
+var images = await bingClient.SearchImageAsync(keyword);
+var videos = await bingClient.SearchVideoAsync(keyword);
+var news = await bingClient.SearchNewsAsync(keyword);
+
+```
 
 詳しくは、以下の記事に記載しています。
 
