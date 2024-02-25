@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json;
+using System.Text.Json.Nodes;
 
 namespace AzureBingSearchClient;
 
@@ -6,7 +7,7 @@ public class BingClient
 {
     public class SerachResult
     {
-        public dynamic? DynamicProperties;
+        public JsonNode? JsonNode;
     }
 
     // Web ページ検索結果
@@ -15,7 +16,7 @@ public class BingClient
         public string? Name;
         public string? Url;
         public string? Snippet;
-        public DateTimeOffset DateLastCrawled;
+        public DateTimeOffset? DateLastCrawled;
     }
 
     // 画像検索結果
@@ -24,7 +25,7 @@ public class BingClient
         public string? Name;
         public string? ThumbnailUrl;
         public string? ContentUrl;
-        public DateTimeOffset DatePublished;
+        public DateTimeOffset? DatePublished;
     }
 
     // 動画検索結果
@@ -37,7 +38,7 @@ public class BingClient
         public string? Publisher;
         public string? Creator;
         public long? ViewCount;
-        public DateTimeOffset DatePublished;
+        public DateTimeOffset? DatePublished;
     }
 
     // News 検索結果
@@ -48,7 +49,7 @@ public class BingClient
         public string? Description;
         public string? ThumbnailUrl;
         public string? Category;
-        public DateTimeOffset DatePublished;
+        public DateTimeOffset? DatePublished;
     }
 
     private static readonly HttpClient _httpClient = new HttpClient();
@@ -68,9 +69,9 @@ public class BingClient
         string endpoint = $"{_endpoint}/search";
         string url = $"{endpoint}?q={Uri.EscapeDataString(keyword)}&mkt={market}&responseFilter=Webpages&count={resultCount}";
 
-        dynamic json = await this.SearchAsync(url, _subscriptionKey).ConfigureAwait(false);
+        var json = await this.SearchAsync(url, _subscriptionKey).ConfigureAwait(false);
 
-        var pages = json.webPages?.value as IEnumerable<dynamic>;
+        var pages = json["webPages"]?["value"]?.AsArray();
 
         if (pages == null)
         {
@@ -78,16 +79,18 @@ public class BingClient
         }
 
         var webPages = pages.Select(page =>
+            page == null ? null :
             new WebPage()
             {
-                DynamicProperties = page,
-                Name = page.name,
-                Url = page.url,
-                Snippet = page.snippet,
-                DateLastCrawled = DateTime.SpecifyKind(page.dateLastCrawled.Value, DateTimeKind.Utc),
-            });
+                JsonNode = page,
+                Name = page["name"]?.GetValue<string>(),
+                Url = page["url"]?.GetValue<string>(),
+                Snippet = page["snippet"]?.GetValue<string>(),
+                DateLastCrawled = page["dateLastCrawled"]?.GetValue<DateTimeOffset>(),
+            })
+            .Where(page => page != null);
 
-        return webPages;
+        return webPages!;
     }
 
     public async Task<IEnumerable<WebImage>> SearchImageAsync(string keyword, string market = "ja-JP", int resultCount = 10)
@@ -97,9 +100,9 @@ public class BingClient
         string endpoint = $"{_endpoint}/images/search";
         string url = $"{endpoint}?q={Uri.EscapeDataString(keyword)}&mkt={market}&count={resultCount}";
 
-        dynamic json = await this.SearchAsync(url, _subscriptionKey).ConfigureAwait(false);
+        var json = await this.SearchAsync(url, _subscriptionKey).ConfigureAwait(false);
 
-        var imgs = json.value as IEnumerable<dynamic>;
+        var imgs = json["value"]?.AsArray();
 
         if (imgs == null)
         {
@@ -107,16 +110,18 @@ public class BingClient
         }
 
         var images = imgs.Select(img =>
+            img == null ? null :
             new WebImage()
             {
-                DynamicProperties = img,
-                Name = img.name,
-                ThumbnailUrl = img.thumbnailUrl,
-                ContentUrl = img.contentUrl,
-                DatePublished = DateTime.SpecifyKind(img.datePublished.Value, DateTimeKind.Utc),
-            });
+                JsonNode = img,
+                Name = img["name"]?.GetValue<string>(),
+                ThumbnailUrl = img["thumbnailUrl"]?.GetValue<string>(),
+                ContentUrl = img["contentUrl"]?.GetValue<string>(),
+                DatePublished = img["datePublished"]?.GetValue<DateTimeOffset>(),
+            })
+            .Where(img => img != null);
 
-        return images;
+        return images!;
     }
 
     public async Task<IEnumerable<WebVideo>> SearchVideoAsync(string keyword, string market = "ja-JP", int resultCount = 10)
@@ -126,9 +131,9 @@ public class BingClient
         string endpoint = $"{_endpoint}/videos/search";
         string url = $"{endpoint}?q={Uri.EscapeDataString(keyword)}&mkt={market}&count={resultCount}";
 
-        dynamic json = await this.SearchAsync(url, _subscriptionKey).ConfigureAwait(false);
+        var json = await this.SearchAsync(url, _subscriptionKey).ConfigureAwait(false);
 
-        var vdos = json.value as IEnumerable<dynamic>;
+        var vdos = json["value"]?.AsArray();
 
         if (vdos == null)
         {
@@ -136,20 +141,22 @@ public class BingClient
         }
 
         var videos = vdos.Select(vdo =>
+            vdo == null ? null :
             new WebVideo()
             {
-                DynamicProperties = vdo,
-                Name = vdo.name,
-                ThumbnailUrl = vdo.thumbnailUrl,
-                ContentUrl = vdo.contentUrl,
-                Description = vdo.description,
-                Publisher = vdo.publisher?[0]?.name,
-                Creator = vdo.creator?.name,
-                ViewCount = vdo.viewCount,
-                DatePublished = DateTime.SpecifyKind(vdo.datePublished.Value, DateTimeKind.Utc),
-            });
+                JsonNode = vdo,
+                Name = vdo["name"]?.GetValue<string>(),
+                ThumbnailUrl = vdo["thumbnailUrl"]?.GetValue<string>(),
+                ContentUrl = vdo["contentUrl"]?.GetValue<string>(),
+                Description = vdo["description"]?.GetValue<string>(),
+                Publisher = vdo["publisher"]?[0]?["name"]?.GetValue<string>(),
+                Creator = vdo["creator"]?["name"]?.GetValue<string>(),
+                ViewCount = vdo["viewCount"]?.GetValue<long>(),
+                DatePublished = vdo["datePublished"]?.GetValue<DateTimeOffset>(),
+            })
+            .Where(vdo => vdo != null);
 
-        return videos;
+        return videos!;
     }
 
     public async Task<IEnumerable<WebNews>> SearchNewsAsync(string keyword, string market = "ja-JP", int resultCount = 10)
@@ -159,9 +166,9 @@ public class BingClient
         string endpoint = $"{_endpoint}/news/search";
         string url = $"{endpoint}?q={Uri.EscapeDataString(keyword)}&mkt={market}&count={resultCount}";
 
-        dynamic json = await this.SearchAsync(url, _subscriptionKey).ConfigureAwait(false);
+        var json = await this.SearchAsync(url, _subscriptionKey).ConfigureAwait(false);
 
-        var someNs = json.value as IEnumerable<dynamic>;
+        var someNs = json["value"]?.AsArray();
 
         if (someNs == null)
         {
@@ -169,21 +176,23 @@ public class BingClient
         }
 
         var newsList = someNs.Select(ns =>
+            ns == null ? null :
             new WebNews()
             {
-                DynamicProperties = ns,
-                Name = ns.name,
-                Url = ns.url,
-                Description = ns.description,
-                ThumbnailUrl = ns.image?.thumbnail?.contentUrl,
-                Category = ns.category,
-                DatePublished = DateTime.SpecifyKind(ns.datePublished.Value, DateTimeKind.Utc),
-            });
+                JsonNode = ns,
+                Name = ns["name"]?.GetValue<string>(),
+                Url = ns["url"]?.GetValue<string>(),
+                Description = ns["description"]?.GetValue<string>(),
+                ThumbnailUrl = ns["image"]?["thumbnail"]?["contentUrl"]?.GetValue<string>(),
+                Category = ns["category"]?.GetValue<string>(),
+                DatePublished = ns["datePublished"]?.GetValue<DateTimeOffset>(),
+            })
+            .Where(ns => ns != null);
 
-        return newsList;
+        return newsList!;
     }
 
-    private async Task<dynamic> SearchAsync(string url, string subscriptionKey)
+    private async Task<JsonNode> SearchAsync(string url, string subscriptionKey)
     {
 
         HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, new Uri(url));
@@ -195,13 +204,13 @@ public class BingClient
 
         string responseString = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
 
-        dynamic? json = JsonConvert.DeserializeObject<dynamic?>(responseString);
+        var jsonNode = JsonSerializer.Deserialize<JsonNode>(responseString);
 
-        if (json == null)
+        if (jsonNode == null)
         {
             throw new InvalidDataException("The response format is invalid.");
         }
 
-        return json;
+        return jsonNode;
     }
 }
