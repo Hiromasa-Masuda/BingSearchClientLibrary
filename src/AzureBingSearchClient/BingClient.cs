@@ -1,6 +1,7 @@
 ﻿using AzureBingSearchClient.Models;
 using System.Text.Json;
 using System.Text.Json.Nodes;
+using System.Threading;
 
 namespace AzureBingSearchClient;
 
@@ -16,14 +17,14 @@ public class BingClient
         this._subscriptionKey = subscriptionKey;
     }
 
-    public async Task<IEnumerable<WebPage>> SearchWebAsync(string keyword, string market = "ja-JP", int resultCount = 10)
+    public async Task<IEnumerable<WebPage>> SearchWebAsync(string keyword, string market = "ja-JP", int resultCount = 10, CancellationToken cancellationToken = default)
     {
         //https://docs.microsoft.com/ja-jp/bing/search-apis/bing-image-search/quickstarts/rest/csharp
 
         string endpoint = $"{_endpoint}/search";
         string url = $"{endpoint}?q={Uri.EscapeDataString(keyword)}&mkt={market}&responseFilter=Webpages&count={resultCount}";
 
-        var json = await this.SearchAsync(url, _subscriptionKey).ConfigureAwait(false);
+        var json = await this.SearchAsync(url, _subscriptionKey, cancellationToken).ConfigureAwait(false);
 
         var pages = json["webPages"]?["value"]?.AsArray();
 
@@ -47,14 +48,14 @@ public class BingClient
         return webPages!;
     }
 
-    public async Task<IEnumerable<WebImage>> SearchImageAsync(string keyword, string market = "ja-JP", int resultCount = 10)
+    public async Task<IEnumerable<WebImage>> SearchImageAsync(string keyword, string market = "ja-JP", int resultCount = 10, CancellationToken cancellationToken = default)
     {
         //https://docs.microsoft.com/ja-jp/bing/search-apis/bing-image-search/quickstarts/rest/csharp
 
         string endpoint = $"{_endpoint}/images/search";
         string url = $"{endpoint}?q={Uri.EscapeDataString(keyword)}&mkt={market}&count={resultCount}";
 
-        var json = await this.SearchAsync(url, _subscriptionKey).ConfigureAwait(false);
+        var json = await this.SearchAsync(url, _subscriptionKey, cancellationToken).ConfigureAwait(false);
 
         var imgs = json["value"]?.AsArray();
 
@@ -78,14 +79,14 @@ public class BingClient
         return images!;
     }
 
-    public async Task<IEnumerable<WebVideo>> SearchVideoAsync(string keyword, string market = "ja-JP", int resultCount = 10)
+    public async Task<IEnumerable<WebVideo>> SearchVideoAsync(string keyword, string market = "ja-JP", int resultCount = 10, CancellationToken cancellationToken = default)
     {
         //https://docs.microsoft.com/ja-jp/bing/search-apis/bing-video-search/quickstarts/rest/csharp
 
         string endpoint = $"{_endpoint}/videos/search";
         string url = $"{endpoint}?q={Uri.EscapeDataString(keyword)}&mkt={market}&count={resultCount}";
 
-        var json = await this.SearchAsync(url, _subscriptionKey).ConfigureAwait(false);
+        var json = await this.SearchAsync(url, _subscriptionKey, cancellationToken).ConfigureAwait(false);
 
         var vdos = json["value"]?.AsArray();
 
@@ -113,14 +114,14 @@ public class BingClient
         return videos!;
     }
 
-    public async Task<IEnumerable<WebNews>> SearchNewsAsync(string keyword, string market = "ja-JP", int resultCount = 10)
+    public async Task<IEnumerable<WebNews>> SearchNewsAsync(string keyword, string market = "ja-JP", int resultCount = 10, CancellationToken cancellationToken = default)
     {
         //https://docs.microsoft.com/ja-jp/bing/search-apis/bing-news-search/quickstarts/rest/csharp
 
         string endpoint = $"{_endpoint}/news/search";
         string url = $"{endpoint}?q={Uri.EscapeDataString(keyword)}&mkt={market}&count={resultCount}";
 
-        var json = await this.SearchAsync(url, _subscriptionKey).ConfigureAwait(false);
+        var json = await this.SearchAsync(url, _subscriptionKey, cancellationToken).ConfigureAwait(false);
 
         var someNs = json["value"]?.AsArray();
 
@@ -146,17 +147,17 @@ public class BingClient
         return newsList!;
     }
 
-    private async Task<JsonNode> SearchAsync(string url, string subscriptionKey)
+    private async Task<JsonNode> SearchAsync(string url, string subscriptionKey, CancellationToken cancellationToken)
     {
 
         HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, new Uri(url));
         request.Headers.Add("Ocp-Apim-Subscription-Key", subscriptionKey);
 
-        HttpResponseMessage response = await _httpClient.SendAsync(request).ConfigureAwait(false);
+        HttpResponseMessage response = await _httpClient.SendAsync(request, cancellationToken).ConfigureAwait(false);
 
         response.EnsureSuccessStatusCode();
 
-        string responseString = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+        string responseString = await response.Content.ReadAsStringAsync(cancellationToken).ConfigureAwait(false);
 
         var jsonNode = JsonSerializer.Deserialize<JsonNode>(responseString);
 
