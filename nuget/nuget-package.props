@@ -1,0 +1,43 @@
+<Project>
+  <PropertyGroup>
+    <!-- https://learn.microsoft.com/nuget/reference/msbuild-targets -->
+    <!-- Central version prefix - applies to all nuget packages. -->
+    <VersionPrefix>1.1.0</VersionPrefix>
+
+    <PackageVersion Condition="'$(VersionSuffix)' != ''">$(VersionPrefix)-$(VersionSuffix)</PackageVersion>
+    <PackageVersion Condition="'$(VersionSuffix)' == ''">$(VersionPrefix)</PackageVersion>
+
+    <Configurations>Debug;Release;Publish</Configurations>
+    <IsPackable>true</IsPackable>   
+
+    <!-- Default description and tags. Packages can override. -->
+    <Title>Azure Bing Search v7 Client Library</Title>
+    <Authors>hiromasa masuda</Authors>
+    <Company>hiromasa masuda</Company>    
+    <Description>This is a library that allows you to use the search function of Bing, Microsoft’s web search engine, via API. By using this library, you can obtain search results such as web pages, images, and news articles.</Description>
+    <PackageTags>Bing, Search</PackageTags>
+    <PackageId>$(AssemblyName)</PackageId>
+
+    <!-- Required license, copyright, and repo information. Packages can override. -->
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <Copyright>© Hiromasa Masuda. All rights reserved.</Copyright>    
+    <RepositoryUrl>https://github.com/Hiromasa-Masuda/BingSearchClientLibrary</RepositoryUrl>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+
+    <!-- Use icon and NUGET readme from dotnet/nuget folder -->    
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+
+    <!-- Build symbol package (.snupkg) to distribute the PDB containing Source Link -->
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+
+  </PropertyGroup>
+
+  <ItemGroup>    
+    <None Include="../../README.md" Link="README.md" Pack="true" PackagePath="." />
+  </ItemGroup>
+
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+  </PropertyGroup>
+</Project>

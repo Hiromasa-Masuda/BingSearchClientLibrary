@@ -1,21 +1,22 @@
 # Azure Bing Search Client Library
 
-Azure Bing Search v7 で利用可能なクライアントライブラリです。
+The Azure Bing Search Client Library is a client library for Azure Bing Search v7 resources.
 
 ```csharp
 string subscriptionKey = "<yourKey>";
-string keyword = "猫";
+// Market code: en-US, ja-JP... 
+// https://learn.microsoft.com/rest/api/cognitiveservices-bingsearch/bing-web-api-v7-reference#market-codes
+string marketCode = "en-Us";
+int resultCount = 10;
+string keyword = "cat";
 
-BingClient bingClient = new BingClient(subscriptionKey);
+BingClient bingClient = new BingClient(subscriptionKey, marketCode, resultCount);
 
 var webPages = await bingClient.SearchWebAsync(keyword);
 var images = await bingClient.SearchImageAsync(keyword);
 var videos = await bingClient.SearchVideoAsync(keyword);
 var news = await bingClient.SearchNewsAsync(keyword);
-
 ```
 
-詳しくは、以下の記事に記載しています。
-
-[Bing Search v7 クライアント ライブラリがないので、実装してみた](https://qiita.com/hiromasa-masuda/items/84f33e39f8761e0e9323)
-
+Please refer to the following article as well:
+- https://qiita.com/hiromasa-masuda/items/84f33e39f8761e0e9323
