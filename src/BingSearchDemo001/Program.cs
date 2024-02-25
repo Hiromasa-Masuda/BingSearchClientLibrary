@@ -11,10 +11,11 @@ class Program
     static async Task Main(string[] args)
     {
         IConfiguration configuration = new ConfigurationBuilder()
-            .AddJsonFile("appsettings.json", true, true)
+            .AddJsonFile("appsettings.json")
+            .AddJsonFile("appsettings.Development.json", optional: true)
             .Build();
 
-        var subscriptionKey = configuration["bingSearch:subscriptionKey"];
+        var subscriptionKey = configuration["bingSearch:subscriptionKey"] ?? throw new ArgumentNullException("bing key not found.");
         
         string keyword = "猫";
 
