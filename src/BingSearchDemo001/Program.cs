@@ -1,8 +1,5 @@
 ﻿using AzureBingSearchClient;
 using Microsoft.Extensions.Configuration;
-using System;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace BingSearchDemo001;
 
@@ -15,11 +12,13 @@ class Program
             .AddJsonFile("appsettings.Development.json", optional: true)
             .Build();
 
-        var subscriptionKey = configuration["bingSearch:subscriptionKey"] ?? throw new ArgumentNullException("bing key not found.");
-        
+        var subscriptionKey = configuration["azBingSearch:subscriptionKey"] ?? throw new ArgumentNullException("bing key not found.");
+        var market = configuration["azBingSearch:market"] ?? throw new ArgumentNullException("bing market not found.");
+        int resultCount = configuration.GetValue<int?>("azBingSearch:resultCount") ?? throw new ArgumentNullException("bing resultCount not found.");
+
         string keyword = "猫";
 
-        BingClient bingClient = new BingClient(subscriptionKey);
+        BingClient bingClient = new BingClient(subscriptionKey, market, resultCount);
 
         var webPages = await bingClient.SearchWebAsync(keyword);
         webPages.ToList().ForEach(w => 

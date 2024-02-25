@@ -1,7 +1,6 @@
 ﻿using AzureBingSearchClient.Models;
 using System.Text.Json;
 using System.Text.Json.Nodes;
-using System.Threading;
 
 namespace AzureBingSearchClient;
 
@@ -11,13 +10,28 @@ public class BingClient
 
     private readonly string _endpoint = "https://api.bing.microsoft.com/v7.0";
     private readonly string _subscriptionKey;
+    private readonly string _market;
+    private readonly int _resultCount;    
 
-    public BingClient(string subscriptionKey)
+    public BingClient(string subscriptionKey) : this(subscriptionKey, "ja-JP", 10) {}
+    public BingClient(string subscriptionKey, string market, int resultCount)
     {
         this._subscriptionKey = subscriptionKey;
+        this._market = market;
+        this._resultCount = resultCount;
     }
 
-    public async Task<IEnumerable<WebPage>> SearchWebAsync(string keyword, string market = "ja-JP", int resultCount = 10, CancellationToken cancellationToken = default)
+    public async Task<IEnumerable<WebPage>> SearchWebAsync(string keyword, CancellationToken cancellationToken = default)
+    {
+        return await this.SearchWebAsync(keyword, this._market, this._resultCount, cancellationToken);
+    }
+
+    public async Task<IEnumerable<WebPage>> SearchWebAsync(string keyword, string market, CancellationToken cancellationToken = default)
+    {
+        return await this.SearchWebAsync(keyword, market, this._resultCount, cancellationToken);
+    }
+
+    public async Task<IEnumerable<WebPage>> SearchWebAsync(string keyword, string market, int resultCount, CancellationToken cancellationToken = default)
     {
         //https://docs.microsoft.com/ja-jp/bing/search-apis/bing-image-search/quickstarts/rest/csharp
 
@@ -48,7 +62,16 @@ public class BingClient
         return webPages!;
     }
 
-    public async Task<IEnumerable<WebImage>> SearchImageAsync(string keyword, string market = "ja-JP", int resultCount = 10, CancellationToken cancellationToken = default)
+    public async Task<IEnumerable<WebImage>> SearchImageAsync(string keyword, CancellationToken cancellationToken = default)
+    {
+        return await this.SearchImageAsync(keyword, this._market, this._resultCount, cancellationToken);
+    }
+
+    public async Task<IEnumerable<WebImage>> SearchImageAsync(string keyword, string market, CancellationToken cancellationToken = default)
+    {
+        return await this.SearchImageAsync(keyword, market, this._resultCount, cancellationToken);
+    }
+    public async Task<IEnumerable<WebImage>> SearchImageAsync(string keyword, string market, int resultCount, CancellationToken cancellationToken = default)
     {
         //https://docs.microsoft.com/ja-jp/bing/search-apis/bing-image-search/quickstarts/rest/csharp
 
@@ -79,7 +102,17 @@ public class BingClient
         return images!;
     }
 
-    public async Task<IEnumerable<WebVideo>> SearchVideoAsync(string keyword, string market = "ja-JP", int resultCount = 10, CancellationToken cancellationToken = default)
+    public async Task<IEnumerable<WebVideo>> SearchVideoAsync(string keyword, CancellationToken cancellationToken = default)
+    {
+        return await this.SearchVideoAsync(keyword, this._market, this._resultCount, cancellationToken);
+    }
+
+    public async Task<IEnumerable<WebVideo>> SearchVideoAsync(string keyword, string market, CancellationToken cancellationToken = default)
+    {
+        return await this.SearchVideoAsync(keyword, market, this._resultCount, cancellationToken);
+    }
+
+    public async Task<IEnumerable<WebVideo>> SearchVideoAsync(string keyword, string market, int resultCount, CancellationToken cancellationToken = default)
     {
         //https://docs.microsoft.com/ja-jp/bing/search-apis/bing-video-search/quickstarts/rest/csharp
 
@@ -114,7 +147,17 @@ public class BingClient
         return videos!;
     }
 
-    public async Task<IEnumerable<WebNews>> SearchNewsAsync(string keyword, string market = "ja-JP", int resultCount = 10, CancellationToken cancellationToken = default)
+    public async Task<IEnumerable<WebNews>> SearchNewsAsync(string keyword, CancellationToken cancellationToken = default)
+    {
+        return await this.SearchNewsAsync(keyword, this._market, this._resultCount, cancellationToken);
+    }
+
+    public async Task<IEnumerable<WebNews>> SearchNewsAsync(string keyword, string market, CancellationToken cancellationToken = default)
+    {
+        return await this.SearchNewsAsync(keyword, market, this._resultCount, cancellationToken);
+    }
+
+    public async Task<IEnumerable<WebNews>> SearchNewsAsync(string keyword, string market, int resultCount, CancellationToken cancellationToken = default)
     {
         //https://docs.microsoft.com/ja-jp/bing/search-apis/bing-news-search/quickstarts/rest/csharp
 
